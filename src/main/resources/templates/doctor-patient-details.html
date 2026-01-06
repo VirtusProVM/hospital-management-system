@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Patient Details</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+</head>
+<body class="bg-light">
+
+<div th:replace="fragments/nav :: nav"></div>
+
+<!-- Patient Details Card -->
+<div class="container mt-5" style="max-width: 600px;">
+  <div th:if="${patient != null}">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h2 class="mb-4 text-primary">Patient Details</h2>
+        <dl class="row mb-0">
+          <dt class="col-sm-4">First Name</dt>
+          <dd class="col-sm-8" th:text="${patient.firstName}">First Name</dd>
+          <dt class="col-sm-4">Last Name</dt>
+          <dd class="col-sm-8" th:text="${patient.lastName}">Last Name</dd>
+          <dt class="col-sm-4">Gender</dt>
+          <dd class="col-sm-8" th:text="${patient.gender}">Gender</dd>
+          <dt class="col-sm-4">Date of Birth</dt>
+          <dd class="col-sm-8" th:text="${patient.dateOfBirth}">Date of Birth</dd>
+          <dt class="col-sm-4">Phone</dt>
+          <dd class="col-sm-8" th:text="${patient.phone}">Phone</dd>
+          <dt class="col-sm-4">Address</dt>
+          <dd class="col-sm-8" th:text="${patient.address}">Address</dd>
+          <dt class="col-sm-4" th:if="${patient.email != null}">Email</dt>
+          <dd class="col-sm-8" th:if="${patient.email != null}" th:text="${patient.email}">Email</dd>
+        </dl>
+        <div class="d-flex gap-2 my-3">
+          <a th:href="@{'/doctor/patients/' + ${patient.patientId} + '/medical-history-file'}" class="btn btn-outline-info btn-sm">Edit Medical History</a>
+          <a th:href="@{'/doctor/patients/' + ${patient.patientId} + '/appointments'}" class="btn btn-outline-primary btn-sm">View Appointments</a>
+        </div>
+        <div class="mb-3">
+          <span class="fw-bold">Medical History:</span>
+          <div class="ms-2" th:text="${medicalHistory}">Medical History Info</div>
+        </div>
+        <a th:href="@{/doctor/patients/search}" class="btn btn-secondary btn-sm">← Back to Search</a>
+      </div>
+    </div>
+
+    <!-- Prescriptions -->
+    <div class="card shadow-sm mt-4">
+      <div class="card-body">
+        <div class="d-flex align-items-center mb-2">
+          <span class="fw-bold me-auto">Prescription History</span>
+          <a th:href="@{'/doctor/patients/' + ${patient.patientId} + '/prescriptions/new'}" class="btn btn-success btn-sm">Create New Prescription</a>
+        </div>
+        <ul class="list-group">
+          <li th:each="prescription : ${prescriptions}" class="list-group-item d-flex justify-content-between align-items-center py-2">
+            <span>
+              <span class="fw-medium" th:text="${prescription.drugName}">DrugName</span>
+              <span th:text="' / ' + ${prescription.dosage} + ' / ' + ${prescription.details}"></span>
+            </span>
+            <a th:href="@{'/doctor/patients/' + ${patient.patientId} + '/prescriptions/' + ${prescription.prescriptionId} + '/edit'}"
+               class="btn btn-outline-secondary btn-sm ms-2">Edit</a>
+          </li>
+          <li th:if="${prescriptions == null or #lists.isEmpty(prescriptions)}" class="list-group-item text-muted">No prescriptions yet.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- If Patient Not Found -->
+  <div th:if="${patient == null}" class="card shadow-sm mt-5">
+    <div class="card-body text-center">
+      <h2 class="mb-3 text-danger">Patient Not Found</h2>
+      <p>The patient you are looking for does not exist.</p>
+      <a th:href="@{/doctor/patients/search}" class="btn btn-secondary btn-sm">← Back to Search</a>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

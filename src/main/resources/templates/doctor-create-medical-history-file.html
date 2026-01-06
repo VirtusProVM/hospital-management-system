@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Medical History File</title>
+</head>
+<body>
+<h2>Medical History for Patient [[${patientId}]]</h2>
+<form th:action="@{'/doctor/patients/' + ${patientId} + '/medical-history-file'}" method="post">
+  <textarea name="medicalHistory" rows="15" cols="250" th:text="${medicalHistory}"></textarea><br>
+  <button type="submit">Save Medical History</button>
+</form>
+<a th:href="@{'/doctor/patients/' + ${patientId}}">Back to Patient</a>
+</body>
+</html>

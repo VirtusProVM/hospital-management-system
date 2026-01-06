@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Check Available Doctors</title>
+  <meta charset="UTF-8"/>
+  <style>
+        table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+        th, td { border: 1px solid #ddd; padding: 8px; }
+        th { background: #f2f2f2; text-align: left; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+<h2>Check Available Doctors</h2>
+
+<!-- patientId may be present as model attribute to allow scheduling directly for a patient -->
+<form id="availabilityForm">
+  <label>Date & Time:</label>
+  <input type="datetime-local" id="dateTime" name="dateTime" th:value="${dateTime != null} ? ${#dates.format(dateTime, 'yyyy-MM-dd''T''HH:mm')} : ''" required/><br/>
+
+  <label>Duration (minutes):</label>
+  <input type="number" id="durationMinutes" name="durationMinutes" th:value="${durationMinutes}" /><br/>
+
+  <label>Specialty (optional):</label>
+  <input type="text" id="specialty" name="specialty" th:value="${specialty}" /><br/>
+
+  <!-- optional hidden patientId so we can show schedule links directly -->
+  <input type="hidden" id="patientId" name="patientId" th:value="${patientId}"/>
+
+  <button type="submit">Check</button>
+</form>
+
+<div id="resultsContainer" class="hidden">
+  <h3>Available Doctors</h3>
+  <div id="resultsMessage"></div>
+  <table id="resultsTable" class="hidden">
+    <thead>
+    <tr><th>Name</th><th>Specialty</th><th>Action</th></tr>
+    </thead>
+    <tbody id="resultsBody">
+    <!-- populated by JS -->
+    </tbody>
+  </table>
+</div>
+
+<script th:inline="javascript">
+/*<![CDATA[*/
+document.getElementById('availabilityForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const dateTimeInput = document.getElementById('dateTime').value;
+    const duration = document.getElementById('durationMinutes').value || '30';
+    const specialty = document.getElementById('specialty').value || '';
+    const patientId = document.getElementById('patientId').value || '';
+
+    if (!dateTimeInput) {
+        alert('Please enter date and time');
+        return;
+    }
+
+    // datetime-local input yields value like "2025-10-22T14:30"
+    // Server expects ISO_LOCAL_DATE_TIME (same format), so we can send directly.
+    const params = new URLSearchParams();
+    params.append('dateTime', dateTimeInput);
+    params.append('durationMinutes', duration);
+    if (specialty) params.append('specialty', specialty);
+
+    const url = /*[[@{/reception/doctors/available/json}]]*/ '/reception/doctors/available/json' + '?' + params.toString();
+
+    // show loading state
+    const container = document.getElementById('resultsContainer');
+    const table = document.getElementById('resultsTable');
+    const body = document.getElementById('resultsBody');
+    const msg = document.getElementById('resultsMessage');
+    container.classList.remove('hidden');
+    table.classList.add('hidden');
+    body.innerHTML = '';
+    msg.textContent = 'Checking availability...';
+
+    fetch(url, {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json'
+        }
+    }).then(response => {
+        if (!response.ok) throw new Error('Network response was not ok');
+        return response.json();
+    }).then(data => {
+        body.innerHTML = '';
+        if (!Array.isArray(data) || data.length === 0) {
+            msg.textContent = 'No available doctors found for the selected slot.';
+            table.classList.add('hidden');
+            return;
+        }
+        msg.textContent = '';
+        data.forEach(function (doc) {
+            const tr = document.createElement('tr');
+            const nameTd = document.createElement('td');
+            nameTd.textContent = (doc.firstName || '') + ' ' + (doc.lastName || '');
+            tr.appendChild(nameTd);
+
+            const specTd = document.createElement('td');
+            specTd.textContent = doc.specialty || '';
+            tr.appendChild(specTd);
+
+            const actionTd = document.createElement('td');
+            // If a patientId is known, create direct schedule link; otherwise, link to select patient
+            if (patientId) {
+                const a = document.createElement('a');
+                // schedule form expects datetime-local input, but we provide a link to new schedule page preselecting doctor
+                // The reception schedule page will let user pick date/time again. If you prefer auto-fill, implement JS to open schedule form pre-filled.
+                a.href = /*[[@{'/reception/patients/' + ${patientId} + '/appointments/new?(doctorId='}]]*/ ('/reception/patients/' + patientId + '/appointments/new?doctorId=' + doc.id);
+                a.textContent = 'Schedule for patient';
+                actionTd.appendChild(a);
+            } else {
+                const a = document.createElement('a');
+                a.href = /*[[@{/reception/patients/search}]]*/ '/reception/patients/search';
+                a.textContent = 'Select Patient First';
+                actionTd.appendChild(a);
+            }
+            tr.appendChild(actionTd);
+
+            body.appendChild(tr);
+        });
+        table.classList.remove('hidden');
+    }).catch(err => {
+        msg.textContent = 'Error checking availability: ' + err.message;
+        table.classList.add('hidden');
+        console.error(err);
+    });
+});
+/*]]>*/
+</script>
+
+</body>
+</html>

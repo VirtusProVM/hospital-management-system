@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="icon" href="images/shorcut.jpg">
+  <title>Cashier Form</title>
+  <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+  <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+  <link rel='stylesheet' type='text/css' href='https://fonts.googleapis.com/css?family=Passion+One'>
+  <link rel='stylesheet' type='text/css' href='https://fonts.googleapis.com/css?family=Oxygen'>
+  <link rel="stylesheet" th:href="@{/css/form-style.css}">
+</head>
+<body>
+<div th:replace="fragments/nav :: nav"></div>
+
+<h2 th:text="${cashier.cashierId == null ? 'Add New Cashier' : 'Edit Cashier'}">Cashier Form</h2>
+
+<div class="container">
+  <div class="row main">
+    <div class="panel-heading">
+      <div class="panel-title text-center">
+        <hr />
+      </div>
+    </div>
+    <div class="main-login main-center">
+      <form class="form-horizontal" method="post" th:action="@{${cashier.cashierId == null} ? '/admins/cashiers/save' : '/admins/cashiers/update/' + ${cashier.cashierId}}" th:object="${cashier}">
+        <div class="form-group">
+          <label for="name" class="cols-sm-2 control-label">Username</label>
+          <div class="cols-sm-10">
+            <div class="input-group">
+              <span class="input-group-addon"><i class="fa fa-user fa-lg" aria-hidden="true"></i></span>
+              <input type="text" th:field="*{username}" class="form-control" name="name" id="name"  placeholder="Enter your Name" />
+            </div>
+            <div class="message" id="message_name">
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="email" class="cols-sm-2 control-label">Your Email</label>
+          <div class="cols-sm-10">
+            <div class="input-group">
+              <span class="input-group-addon"><i class="fa fa-envelope fa" aria-hidden="true"></i></span>
+              <input type="email" th:field="*{email}" class="form-control" name="email" id="email"  placeholder="Enter your Email"/>
+            </div>
+            <div class="message" id="message_mail">
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="password" class="cols-sm-2 control-label">Password</label>
+          <div class="cols-sm-10">
+            <div class="input-group">
+              <span class="input-group-addon"><i class="fa fa-unlock fa-lg" aria-hidden="true"></i></span>
+              <input type="password" th:field="*{password}" class="form-control" name="password" id="password"  placeholder="Enter your Password"/>
+            </div>
+            <div class="message" id="message_password">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+
+          <div class="cols-sm-10">
+            <div class="input-group">
+              <label class="cols-sm-2 control-label">Active</label>
+              <span class="input-group-addon"><i class="fa fa-lock fa-lg" aria-hidden="true"></i></span>
+              <input type="checkbox" th:field="*{isActive}" class="form-control" name="isActive" id="isActive"/>
+            </div>
+            <div class="message" id="message_isActive">
+            </div>
+          </div>
+        </div>
+        <div class="form-group ">
+          <button type="submit" class="btn btn-primary btn-lg btn-block login-button" onclick="check()">Create</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script type="text/javascript" th:src="@{/js/js.js}"></script>
+
+</body>
+</html>

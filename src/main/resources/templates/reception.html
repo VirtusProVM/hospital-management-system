@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <title>Reception Page</title>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+    <style>
+      body { background: #f7fafd; }
+      h1 { font-size: 2em; }
+    </style>
+</head>
+<body>
+
+<div th:replace="fragments/nav :: nav"></div>
+
+<div class="container mt-4">
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert" th:text="${successMessage}">
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <h1 class="mb-4" style="margin-top: 100px;">Today's Appointments</h1>
+    <h2 class="mb-4 text-secondary" style="font-size:1.4em;">Patient List</h2>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped table-hover align-middle shadow-sm">
+            <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Patient Name</th>
+                <th>Doctor Name</th>
+                <th>Appointment Time</th>
+                <th>Status</th>
+                <th>Notes</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="app : ${appointments}">
+                <td th:text="${app.appointmentId}">1</td>
+                <td th:text="${app.patient.fullname}">John Doe</td>
+                <td th:text="${app.doctor.fullname}">Dr. Smith</td>
+                <td th:text="${app.appointmentDate}">2025-12-01 10:00</td>
+                <td>
+              <span th:text="${app.status}"></span>
+                </td>
+                <td th:text="${app.notes}">-</td>
+                <td>
+                    <a th:href="@{'/reception/patients/' + ${app.patient.patientId}}"
+                       class="btn btn-sm btn-primary mb-1">View Patient</a><br/>
+                    <a th:href="@{'/reception/appointments/' + ${app.appointmentId} + '/cancel'}"
+                       class="btn btn-sm btn-outline-danger"
+                       onclick="return confirm('Cancel Appointment?');">
+                        Cancel
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<script>
+        window.onload = function() {
+            var msgDiv = document.getElementById('msg');
+            if (msgDiv && msgDiv.textContent.trim() !== "") {
+                alert(msgDiv.textContent);
+            }
+        };
+    </script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

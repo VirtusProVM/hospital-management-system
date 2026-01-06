@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="icon" href="images/shorcut.jpg">
+    <title>Admin Form</title>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+    <link rel='stylesheet' type='text/css' href='https://fonts.googleapis.com/css?family=Passion+One'>
+    <link rel='stylesheet' type='text/css' href='https://fonts.googleapis.com/css?family=Oxygen'>
+    <link rel="stylesheet" th:href="@{/css/form-style.css}">
+</head>
+<body>
+<div th:replace="fragments/nav :: nav"></div>
+
+
+<h2 class="title" th:text="${admin.adminId == null ? 'Add New Admin' : 'Edit Admin'}">Admin Form</h2>
+
+<!--
+<form class="form-floating" th:action="@{/admins/save}" th:object="${admin}" method="post">
+    <input type="hidden" th:field="*{adminId}" />
+    <div class="mb-3">
+        <label class="form-label">Username:</label>
+        <input class="form-control" th:field="*{username}" type="text" required/><br/>
+        <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}" style="color:red"></span>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Password:</label>
+        <input class="form-control" th:field="*{password}" type="password" required/><br/>
+        <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}" style="color:red"></span>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Email:</label>
+        <input class="form-control" th:field="*{email}" type="email" required/><br/>
+        <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="color:red"></span>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">User Level:</label>
+        <input class="form-control" th:field="*{userLevel}" type="text" required/><br/>
+        <span th:if="${#fields.hasErrors('userLevel')}" th:errors="*{userLevel}" style="color:red"></span>
+    </div>
+    <div class="button-checkbox">
+        <button type="button" class="btn" data-color="primary">Active</button>
+        <input class="hidden" th:field="*{isActive}" type="checkbox" checked />
+
+    </div>
+    <button class="btn btn-success" type="submit">Save</button>
+</form>
+<a class="btn btn-danger" href="/admins">Cancel</a>
+
+<script>
+    $(function () {
+    $('.button-checkbox').each(function () {
+
+        // Settings
+        var $widget = $(this),
+            $button = $widget.find('button'),
+            $checkbox = $widget.find('input:checkbox'),
+            color = $button.data('color'),
+            settings = {
+                on: {
+                    icon: 'glyphicon glyphicon-check'
+                },
+                off: {
+                    icon: 'glyphicon glyphicon-unchecked'
+                }
+            };
+
+        // Event Handlers
+        $button.on('click', function () {
+            $checkbox.prop('checked', !$checkbox.is(':checked'));
+            $checkbox.triggerHandler('change');
+            updateDisplay();
+        });
+        $checkbox.on('change', function () {
+            updateDisplay();
+        });
+
+        // Actions
+        function updateDisplay() {
+            var isChecked = $checkbox.is(':checked');
+
+            // Set the button's state
+            $button.data('state', (isChecked) ? "on" : "off");
+
+            // Set the button's icon
+            $button.find('.state-icon')
+                .removeClass()
+                .addClass('state-icon ' + settings[$button.data('state')].icon);
+
+            // Update the button's color
+            if (isChecked) {
+                $button
+                    .removeClass('btn-default')
+                    .addClass('btn-' + color + ' active');
+            }
+            else {
+                $button
+                    .removeClass('btn-' + color + ' active')
+                    .addClass('btn-default');
+            }
+        }
+
+        // Initialization
+        function init() {
+
+            updateDisplay();
+
+            // Inject the icon if applicable
+            if ($button.find('.state-icon').length == 0) {
+                $button.prepend('<i class="state-icon ' + settings[$button.data('state')].icon + '"></i> ');
+            }
+        }
+        init();
+    });
+});
+</script>
+-->
+
+<div class="container">
+    <div class="row main">
+        <div class="panel-heading">
+            <div class="panel-title text-center">
+                <hr />
+            </div>
+        </div>
+        <div class="main-login main-center">
+            <form class="form-horizontal" method="post" th:action="@{/admins/save}" th:object="${admin}">
+                <div class="form-group">
+                    <label for="name" class="cols-sm-2 control-label">Username</label>
+                    <div class="cols-sm-10">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-user fa-lg" aria-hidden="true"></i></span>
+                            <input type="text" th:field="*{username}" class="form-control" name="name" id="name"  placeholder="Enter your Name" />
+                        </div>
+                        <div class="message" id="message_name">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="email" class="cols-sm-2 control-label">Your Email</label>
+                    <div class="cols-sm-10">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-envelope fa" aria-hidden="true"></i></span>
+                            <input type="email" th:field="*{email}" class="form-control" name="email" id="email"  placeholder="Enter your Email"/>
+                        </div>
+                        <div class="message" id="message_mail">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="password" class="cols-sm-2 control-label">Password</label>
+                    <div class="cols-sm-10">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-unlock fa-lg" aria-hidden="true"></i></span>
+                            <input type="password" th:field="*{password}" class="form-control" name="password" id="password"  placeholder="Enter your Password"/>
+                        </div>
+                        <div class="message" id="message_password">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="cols-sm-2 control-label">User Level</label>
+                    <div class="cols-sm-10">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-lock fa-lg" aria-hidden="true"></i></span>
+                            <input type="text" th:field="*{userLevel}" class="form-control" name="userLevel" id="userLevel"  placeholder="User Level" disabled/>
+                        </div>
+                        <div class="message" id="message_userLevel">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+
+                    <div class="cols-sm-10">
+                        <div class="input-group">
+                            <label class="cols-sm-2 control-label">Active</label>
+                            <span class="input-group-addon"><i class="fa fa-lock fa-lg" aria-hidden="true"></i></span>
+                            <input type="checkbox" th:field="*{isActive}" class="form-control" name="isActive" id="isActive"/>
+                        </div>
+                        <div class="message" id="message_isActive">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group ">
+                    <button type="submit" class="btn btn-primary btn-lg btn-block login-button" onclick="check()">Register</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script type="text/javascript" th:src="@{/js/js.js}"></script>
+
+</body>
+</html>
